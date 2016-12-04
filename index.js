@@ -36,7 +36,7 @@ function replaceFiles(string, opts) {
     fileContents = fs.readFileSync(file);
     output = 'data:image/' + ext + ';base64,' + fileContents.toString('base64');
 
-    return string.replace(file, output);
+    return output;
 }
 
 function replaceInline(string, opts) {
