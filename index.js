@@ -5,11 +5,30 @@ function getUrl(value) {
     var reg = /url\((\s*)(['"]?)(.+?)\2(\s*)\)/g,
         match = reg.exec(value),
         url = match[3];
+
     return url;
 }
 
-function replaceFiles(string) {
-    file = getUrl(string);
+function getUrlWithoutPattern(value, pattern) {
+    return value.match(pattern)[2];
+}
+
+function getUrlWithBaseDir(value, baseDir) {
+    if (baseDir !== undefined) {
+        return baseDir + value;
+    }
+
+    return value;
+}
+
+function replaceFiles(string, opts) {
+    if (opts.isConvertPattern === false) {
+        file = getUrlWithoutPattern(string, opts.pattern);
+        file = getUrlWithBaseDir(file, opts.baseDir);
+    } else {
+        file = getUrl(string);
+    }
+
     ext = file.split('.')[1];
 
     if(ext === 'svg') ext = ext + '+xml';
@@ -23,6 +42,7 @@ function replaceFiles(string) {
 function replaceInline(string, opts) {
     output = new Buffer(string).toString('base64');
     if(opts.prepend) output = opts.prepend + output;
+
     return output;
 }
 
@@ -42,7 +62,7 @@ module.exports = postcss.plugin('postcss-base64', function (opts) {
             search = new RegExp('url\\(.*(' + exts + ').*\\)', 'i');
 
             css.replaceValues(search, function (string) {
-                return replaceFiles(string);
+                return replaceFiles(getUrlWithBaseDir(string, opts.baseDir), opts);
             });
         }
 
@@ -54,7 +74,11 @@ module.exports = postcss.plugin('postcss-base64', function (opts) {
             search = opts.pattern;
 
             css.replaceValues(search, function (string) {
-                return replaceInline(string, opts);
+                if (opts.isConvertPattern === false) {
+                    return replaceFiles(string, opts)
+                } else {
+                    return replaceInline(string, opts);
+                }
             });
         }
     };

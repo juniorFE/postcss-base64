@@ -1,3 +1,5 @@
+Original repo: https://github.com/juniorFE/postcss-base64
+
 postcss-base64, a [PostCSS](https://github.com/postcss/postcss/) plugin, replaces urls or values inside `url()` functions with their base64 encoded strings.
 
 [GitHub](https://github.com/jelmerdemaat/postcss-base64) | [NPM](https://www.npmjs.com/package/postcss-base64) | [@jelmerdemaat](https://twitter.com/jelmerdemaat)
